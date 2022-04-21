@@ -1,0 +1,199 @@
+base.html
+
+{% if user.is_authenticated %}
+
+Logged In as {{ user.username }}
+
+<a href="{% url 'createtodo' %}">Создать</a>
+<a href="{% url 'currenttodos' %}">Текущее</a>
+<a href="{% url 'completedtodos' %}">Выполнено</a>
+
+<form action="{% url 'logoutuser' %}" method="POST">
+  {% csrf_token %}
+<button type="submit">Выход</button>
+</form>
+
+{% else %}
+
+<a href="{% url 'signupuser' %}">Зарегистрироваться</a>
+<a href="{% url 'loginuser' %}">Вход</a>
+
+{% endif %}
+<br>
+<br>
+
+
+{% block content %}{% endblock %}
+
+
+
+-----------------------------------------------
+
+
+
+completedtodos.html
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+Completed
+
+<ul>
+ {% for todo in todos %}
+ <li>
+   <a href="{% url 'viewtodo' todo.id  %}">
+   {% if todo.important %}<b>{% endif %}{{ todo.title }}{% if todo.important %}</b>{% endif %}
+   {% if todo.memo %} - {{ todo.memo }}{% endif %}
+   {{ todo.datecompleted|date:'M j Y H:i' }}
+   </a>
+ </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+
+
+------------------------------------------------
+
+
+
+
+createtodo.html
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+
+<h1>Создать</h1>
+
+<h2>{{ error }}</h2>
+
+<form method="POST">
+  {% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Создать</button>
+</form>
+
+{% endblock %}
+
+
+----------------------------------------------------------------
+
+
+currenttodos.html
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+Current
+
+<ul>
+ {% for todo in todos %}
+ <li>
+   <a href="{% url 'viewtodo' todo.id  %}">
+   {% if todo.important %}<b>{% endif %}{{todo.title}}{% if todo.important %}<b>{% endif %}
+   {% if todo.memo %} - {{ todo.memo }}{% endif %}
+   </a>
+ </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+
+--------------------------------------------------
+
+home.html
+
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+Home
+
+{% endblock %}
+---------------------------------------
+
+
+loginuser.html
+
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+
+<h1>Вход</h1>
+
+<h2>{{ error }}</h2>
+
+<form method="POST">
+  {% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Вход</button>
+</form>
+
+{% endblock %}
+
+
+
+------------------------------------------
+
+signupuser.html
+
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+
+<h1>Зарегистрироваться</h1>
+
+<h2>{{ error }}</h2>
+
+<form method="POST">
+  {% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Зарегистрироваться</button>
+</form>
+
+{% endblock %}
+
+
+------------------------------------------------
+
+viewtodo.html
+
+
+
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+{{ error }}
+
+{{ todo.title }}
+
+<form method='POST'>
+  {% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Сохранить</button>
+</form>
+
+<form method='POST' action="{% url 'completetodo' todo.id %}">
+  {% csrf_token %}
+<button type="submit">Выполнено</button>
+</form>
+
+<form method='POST' action="{% url 'deletetodo' todo.id %}">
+  {% csrf_token %}
+<button type="submit">Удалить</button>
+</form>
+
+{% endblock %}
+
+
+
